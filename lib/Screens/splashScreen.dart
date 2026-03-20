@@ -9,7 +9,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -17,28 +16,22 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/dashboard');
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      backgroundColor: const Color(0xFF1E293B),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            Icon(
-              Icons.local_shipping,
-              size: 80,
-              color: Colors.white,
-            ),
+            Icon(Icons.call, size: 80, color: Color(0xFF3B82F6)),
 
             SizedBox(height: 20),
 
             Text(
-              "LoadMiles",
+              "SignalBridge",
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -46,6 +39,12 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
 
+            SizedBox(height: 10),
+
+            Text(
+              "Peer-to-Peer Calling",
+              style: TextStyle(fontSize: 16, color: Colors.white70),
+            ),
           ],
         ),
       ),

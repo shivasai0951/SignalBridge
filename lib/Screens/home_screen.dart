@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../Utility/appColors.dart';
+import 'package:signalbridge/Screens/ProfileEditScreen.dart';
+import 'package:signalbridge/Screens/profile_view_screen.dart';
 import 'Dashboard.dart';
-import 'save_contact_screen.dart';
 import 'history_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,48 +14,100 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  int selectedIndex = 0;
+  int currentIndex = 0;
 
-  final List screens = const [
+  final List<Widget> pages  = const [
     DashboardScreen(),
-    SaveContactScreen(),
     HistoryScreen(),
+    ProfileViewScreen(),
   ];
-
-  void onTabTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
 
-      body: screens[selectedIndex],
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: AppBar(
+          backgroundColor: const Color(0xFF1E293B),
+          title: const Text(
+            "SignalBridge",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          actions: [
+            PopupMenuButton(
+
+              onSelected: (value) {
+
+                if (value == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ProfileEditScreen(),
+                    ),
+                  );
+                }
+
+              },
+
+              itemBuilder: (context) => const [
+
+                PopupMenuItem(
+                  value: 1,
+                  child: Text("User Profile"),
+                ),
+
+                PopupMenuItem(
+                  value: 2,
+                  child: Text("Settings"),
+                ),
+
+                PopupMenuItem(
+                  value: 3,
+                  child: Text("App Info"),
+                ),
+
+              ],
+            )
+          ],
+        ),
+      ),
+
+
+      body: pages[currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.appBar,
-        selectedItemColor: AppColors.primaryButton,
-        unselectedItemColor: Colors.grey,
-        currentIndex: selectedIndex,
-        onTap: onTabTapped,
+
+        currentIndex: currentIndex,
+
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+
+        selectedItemColor: const Color(0xFF3B82F6),
 
         items: const [
 
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Dashboard",
+            label: "Home",
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_add),
-            label: "Save Contact",
+            icon: Icon(Icons.call),
+            label: "Call History",
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: "History",
+            icon: Icon(Icons.person),
+            label: "Profile",
           ),
 
         ],
@@ -62,3 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+
+

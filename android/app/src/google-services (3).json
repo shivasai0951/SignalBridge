@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "916051932963",
+    "project_id": "signalbridge-c21fd",
+    "storage_bucket": "signalbridge-c21fd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916051932963:android:b36b2e767ded248655fe96",
+        "android_client_info": {
+          "package_name": "com.kandoji.signalbridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-7dKuJq_6GowXjfIddZnUZ2f7XLOu3wY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
