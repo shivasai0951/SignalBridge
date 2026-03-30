@@ -25,7 +25,7 @@ class PureP2PService {
       {'urls': 'stun:stun2.l.google.com:19302'},
       {'urls': 'stun:stun3.l.google.com:19302'},
       {'urls': 'stun:stun4.l.google.com:19302'},
-    ]
+    ],
   };
 
   void setContext(BuildContext context) {
@@ -39,23 +39,29 @@ class PureP2PService {
 
   void _startListeningForOffers() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     Stream.periodic(const Duration(seconds: 2)).listen((_) async {
       if (_isCallActive) return;
-      
+
       final offerData = prefs.getString('incoming_offer_$_myUserId');
       if (offerData != null && offerData != _pendingOffer) {
         _pendingOffer = offerData;
         final data = jsonDecode(offerData);
         final callerId = data['callerId'] as String;
         final offer = data['offer'] as String;
-        
+
         print("📞 Incoming call from $callerId");
         _handleIncomingCall(callerId, offer);
-        
+
         await prefs.remove('incoming_offer_$_myUserId');
       }
     });
+  }
+
+  Future<void> setRemoteOffer(String callerId, String offer) async {
+    _currentCallerId = callerId;
+    _pendingOffer = jsonEncode({'callerId': callerId, 'offer': offer});
+    print("📞 Received offer from $callerId");
   }
 
   void _handleIncomingCall(String callerId, String offer) {
@@ -70,10 +76,13 @@ class PureP2PService {
     }
   }
 
-  Future<Map<String, String>> callUser(String targetId, {bool isVideo = false}) async {
+  Future<Map<String, String>> callUser(
+    String targetId, {
+    bool isVideo = false,
+  }) async {
     try {
       _isCallActive = true;
-      
+
       await _createPeerConnection();
       await _getUserMedia(isVideo);
 
@@ -83,7 +92,7 @@ class PureP2PService {
       await _saveCallLog(targetId, 'outgoing', isVideo ? 'video' : 'audio');
 
       print("📞 Calling $targetId...");
-      
+
       return {
         'callerId': _myUserId!,
         'offer': offer.sdp!,
@@ -96,7 +105,10 @@ class PureP2PService {
     }
   }
 
-  Future<void> sendOfferToContact(String targetId, Map<String, String> offerData) async {
+  Future<void> sendOfferToContact(
+    String targetId,
+    Map<String, String> offerData,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('incoming_offer_$targetId', jsonEncode(offerData));
   }
@@ -120,15 +132,12 @@ class PureP2PService {
       await _peerConnection!.setLocalDescription(answer);
 
       _isCallActive = true;
-      
+
       await _saveCallLog(_currentCallerId!, 'incoming', 'audio');
-      
+
       print("✅ Call accepted");
-      
-      return {
-        'answer': answer.sdp!,
-        'callerId': _myUserId!,
-      };
+
+      return {'answer': answer.sdp!, 'callerId': _myUserId!};
     } catch (e) {
       print("❌ Error accepting call: $e");
       rethrow;
@@ -176,7 +185,8 @@ class PureP2PService {
       print("🔗 Connection state: $state");
       if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
         print("✅ Call connected successfully!");
-      } else if (state == RTCPeerConnectionState.RTCPeerConnectionStateDisconnected ||
+      } else if (state ==
+              RTCPeerConnectionState.RTCPeerConnectionStateDisconnected ||
           state == RTCPeerConnectionState.RTCPeerConnectionStateFailed) {
         _cleanup();
       }
@@ -186,11 +196,7 @@ class PureP2PService {
   Future<void> _getUserMedia(bool isVideo) async {
     final Map<String, dynamic> mediaConstraints = {
       'audio': true,
-      'video': isVideo
-          ? {
-              'facingMode': 'user',
-            }
-          : false,
+      'video': isVideo ? {'facingMode': 'user'} : false,
     };
 
     _localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
@@ -200,7 +206,11 @@ class PureP2PService {
     });
   }
 
-  Future<void> _saveCallLog(String contactId, String type, String callType) async {
+  Future<void> _saveCallLog(
+    String contactId,
+    String type,
+    String callType,
+  ) async {
     final callLog = CallLogModel(
       contactId: contactId,
       callType: type,
@@ -214,7 +224,7 @@ class PureP2PService {
   Future<void> _cleanup() async {
     _isCallActive = false;
     _currentCallerId = null;
-    
+
     await _localStream?.dispose();
     _localStream = null;
 

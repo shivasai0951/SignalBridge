@@ -34,7 +34,7 @@ User A (ID: 12345678) ←→ Firebase (Free Signaling) ←→ User B (ID: 876543
 ### Step 3: Configure Android App
 
 1. In Firebase Console, click the Android icon
-2. Register app with package name: `com.example.signalbridge` (or your actual package)
+2. Register app with package name: `com.kandoji.signalbridge` (or your actual package)
 3. Download `google-services.json`
 4. Place it in: `android/app/google-services.json`
 
